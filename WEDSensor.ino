@@ -1,10 +1,10 @@
-#include<Wire.h>
+#include <Wire.h>
 #include <math.h>
 #include <SD.h>
 #include <SPI.h>
 
 const int MPU=0x68; 
-int16_t X,Y,Z,;
+int16_t X,Y,Z;
 
 const int chipSelect = 10;
 int transmitPin = 8;
@@ -25,13 +25,16 @@ void setup() {
 }
 
 void loop() {
-  if(findIntensity()>3.5){
+  if(findIntensity()>4.17){
     digitalWrite(transmitPin,HIGH);
+  }
+  else{
+    digitalWrite(transmitPin,LOW);
   }
 
   printDataToFile(findIntensity());
 
-  delay(100);
+  delay(500);
 }
 
 float findIntensity(){
@@ -44,7 +47,10 @@ float findIntensity(){
   Z=Wire.read()<<8|Wire.read();
 
   float pga = sqrt(pow(X, 2) + pow(Y, 2) + pow(Z, 2));
-  float richterIntensity = log10(pga) + 1.5;
+  float richterIntensity = log10(pga);
+
+  Serial.print(richterIntensity);
+  Serial.print("\n");
 
   return richterIntensity;
 }
